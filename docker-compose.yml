@@ -38,6 +38,6 @@ services:
 
 networks:
   internal-network:
-    driver: internal
+    driver: bridge
   internet:
     driver: bridge 

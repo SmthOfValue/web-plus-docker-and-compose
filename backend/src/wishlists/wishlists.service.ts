@@ -52,7 +52,6 @@ export class WishlistsService {
 
   async update(id: number, updateWishlistDto: UpdateWishlistDto, user: User) {
     const { name, items, description, image } = updateWishlistDto;
-    console.log(items);
     let wishes: Wish[];
     if (items) {
       wishes = await this.wishesService.findMany(items);

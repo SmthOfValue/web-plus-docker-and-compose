@@ -12,7 +12,6 @@ export class RemoveUserInfoFromOfferInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     return next.handle().pipe(
       map((data: Offer | Offer[]) => {
-        console.log(data);
         if (Array.isArray(data)) {
           data.map((offer) => {
             delete offer.user.password;

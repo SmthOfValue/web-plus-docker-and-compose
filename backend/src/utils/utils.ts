@@ -21,6 +21,5 @@ export const createPostgresConfig = (
     database: configService.get('POSTGRES_DB'),
     entities: [User, Offer, Wish, Wishlist],
     synchronize: true,
-    schema: 'kupipodariday',
   };
 };

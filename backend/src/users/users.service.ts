@@ -1,11 +1,18 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Like, Repository } from 'typeorm';
 import { HashService } from 'src/hash/hash.service';
-import { ANOTHER_USER_WITH_THIS_DATA } from 'src/utils/constants';
+import {
+  ANOTHER_USER_WITH_THIS_DATA,
+  USER_NOT_FOUND,
+} from 'src/utils/constants';
 import { Wish } from 'src/wishes/entities/wish.entity';
 
 @Injectable()
@@ -21,8 +28,10 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const { username, email, avatar, about } = createUserDto;
 
-    const existingUserByEmail = this.userRepository.findOneBy({ email });
-    const existinguserByName = this.userRepository.findOneBy({ username });
+    const existingUserByEmail = await this.userRepository.findOneBy({ email });
+    const existinguserByName = await this.userRepository.findOneBy({
+      username,
+    });
 
     if (existingUserByEmail || existinguserByName) {
       throw new BadRequestException(ANOTHER_USER_WITH_THIS_DATA);
@@ -52,6 +61,10 @@ export class UsersService {
 
   async findOneByUsername(username: string) {
     const user = await this.userRepository.findOneBy({ username });
+
+    if (!user) {
+      throw new NotFoundException(USER_NOT_FOUND);
+    }
 
     return user;
   }
@@ -84,7 +97,6 @@ export class UsersService {
   }
 
   async findMany(query: string) {
-    console.log(query);
     const searchResult = await this.userRepository.find({
       where: [{ username: Like(`%${query}%`) }, { email: Like(`%${query}%`) }],
     });
